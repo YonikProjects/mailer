@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 
