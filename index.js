@@ -15,7 +15,7 @@ app.post("/pform", async (req, res) => {
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_Server,
     port: process.env.SMTP_Port,
-    secure: true,
+    // secure: true,
     auth: {
       user: process.env.SMTP_User,
       pass: process.env.SMTP_Pass,
