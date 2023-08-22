@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
   "/pform",
-  turnstile.validate(process.env.TURNSTILE),
+  // turnstile.validate(process.env.TURNSTILE),
   async (req, res) => {
     let formData = req.body;
     console.log(formData);
