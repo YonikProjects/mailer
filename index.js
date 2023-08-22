@@ -15,7 +15,7 @@ app.post(
   turnstile.validate(process.env.TURNSTILE),
   async (req, res) => {
     let formData = req.body;
-
+    console.log(formData);
     let transporter = nodemailer.createTransport({
       host: process.env.SMTP_Server,
       port: process.env.SMTP_Port,
