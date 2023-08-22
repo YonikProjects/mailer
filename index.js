@@ -1,8 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const fetch = require("node-fetch");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
+let fetch;
+import("node-fetch").then((module) => {
+  fetch = module.default;
+});
 
 const app = express();
 const PORT = 3000;
