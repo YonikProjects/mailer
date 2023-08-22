@@ -29,6 +29,7 @@ const verifyTokenMiddleware = async (req, res, next) => {
     });
 
     const outcome = await result.json();
+    console.log(outcome);
     if (outcome.success) {
       next(); // Continue to the next middleware/route if successful
     } else {
