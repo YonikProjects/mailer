@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
-const { turnstile } = require("express-turnstile");
 
 const app = express();
 const PORT = 3000;
@@ -17,7 +16,6 @@ const verifyTokenMiddleware = async (req, res, next) => {
   const formData = new URLSearchParams();
   formData.append("secret", process.env.TURNSTILE);
   formData.append("response", token);
-
   const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
   try {
