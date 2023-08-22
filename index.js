@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
+const FormData = require("form-data");
 let fetch;
 import("node-fetch").then((module) => {
   fetch = module.default;
@@ -17,7 +18,7 @@ const verifyTokenMiddleware = async (req, res, next) => {
   const token = req.body.token;
 
   // Use the FormData class to format the data
-  const formData = new URLSearchParams();
+  const formData = new FormData();
   formData.append("secret", process.env.TURNSTILE);
   formData.append("response", token);
   const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
