@@ -3,7 +3,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
-const FormData = require("form-data");
 let fetch;
 import("node-fetch").then((module) => {
   fetch = module.default;
@@ -27,14 +26,11 @@ const app = express();
 const PORT = 3000;
 const verifyTokenMiddleware = async (req, res, next) => {
   const token = req.body["cf-turnstile-response"];
-  const formData = new FormData();
-  formData.append("secret", process.env.TURNSTILE);
-  formData.append("response", token);
   const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
   try {
     const result = await fetch(url, {
-      body: formData,
+      body: { secret: process.env.TURNSTILE, response: token },
       method: "POST",
     });
 
