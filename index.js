@@ -13,38 +13,6 @@ const PORT = 3000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
-const verifyTokenMiddleware = async (req, res, next) => {
-  // Assuming you have the token from the request, if not, adjust accordingly
-  const token = req.body.token;
-  console.log(req);
-  console.log(`Token is ${token}`);
-  console.log(`Body is ${req.body}`);
-  // Use the FormData class to format the data
-  const formData = new FormData();
-  formData.append("secret", process.env.TURNSTILE);
-  formData.append("response", token);
-  const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
-  try {
-    const result = await fetch(url, {
-      body: formData,
-      method: "POST",
-    });
-
-    const outcome = await result.json();
-    console.log(outcome);
-    if (outcome.success) {
-      next(); // Continue to the next middleware/route if successful
-    } else {
-      // Handle the verification failure
-      res.status(401).json({ error: "Verification failed" });
-    }
-  } catch (error) {
-    // Handle any other errors that might occur
-    console.error("Error verifying token:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
 app.use(express.json()); // Assuming the token is sent as JSON
 app.use(verifyTokenMiddleware);
@@ -86,3 +54,33 @@ app.post("/pform", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+const verifyTokenMiddleware = async (req, res, next) => {
+  // Assuming you have the token from the request, if not, adjust accordingly
+  const token = req.body["cf-turnstile-response"];
+  // Use the FormData class to format the data
+  const formData = new FormData();
+  formData.append("secret", process.env.TURNSTILE);
+  formData.append("response", token);
+  const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+  try {
+    const result = await fetch(url, {
+      body: formData,
+      method: "POST",
+    });
+
+    const outcome = await result.json();
+    console.log(outcome);
+    if (outcome.success) {
+      next(); // Continue to the next middleware/route if successful
+    } else {
+      // Handle the verification failure
+      res.status(401).json({ error: "Verification failed" });
+    }
+  } catch (error) {
+    // Handle any other errors that might occur
+    console.error("Error verifying token:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
