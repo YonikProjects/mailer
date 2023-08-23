@@ -2,18 +2,26 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
+const cors = require("cors");
 const FormData = require("form-data");
 let fetch;
 import("node-fetch").then((module) => {
   fetch = module.default;
 });
-
+let allowlist = ["http://example1.com", "http://example2.com"];
+let corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (allowlist.indexOf(req.header("Origin")) !== -1) {
+    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false }; // disable CORS for this request
+  }
+  callback(null, corsOptions); // callback expects two parameters: error and options
+};
 const app = express();
 const PORT = 3000;
 const verifyTokenMiddleware = async (req, res, next) => {
-  // Assuming you have the token from the request, if not, adjust accordingly
   const token = req.body["cf-turnstile-response"];
-  // Use the FormData class to format the data
   const formData = new FormData();
   formData.append("secret", process.env.TURNSTILE);
   formData.append("response", token);
@@ -45,9 +53,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json()); // Assuming the token is sent as JSON
 app.use(verifyTokenMiddleware);
-app.post("/pform", async (req, res) => {
+app.post("/pform", cors(corsOptionsDelegate), async (req, res) => {
   let formData = req.body;
-  console.log(formData);
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_Server,
     port: process.env.SMTP_Port,
