@@ -8,7 +8,12 @@ let fetch;
 import("node-fetch").then((module) => {
   fetch = module.default;
 });
-let allowlist = ["http://example1.com", "http://example2.com"];
+let allowlist = [
+  "https://dmitrypol.com",
+  "http://localhost:5173",
+  "https://test.dmitrypol.com",
+  "https://portfolio.dmitrypol.com",
+];
 let corsOptionsDelegate = function (req, callback) {
   let corsOptions;
   if (allowlist.indexOf(req.header("Origin")) !== -1) {
