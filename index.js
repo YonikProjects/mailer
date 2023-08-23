@@ -27,11 +27,17 @@ const PORT = 3000;
 const verifyTokenMiddleware = async (req, res, next) => {
   const token = req.body["cf-turnstile-response"];
   const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-
+  const data = {
+    secret: process.env.TURNSTILE,
+    response: token,
+  };
   try {
     const result = await fetch(url, {
-      body: { secret: process.env.TURNSTILE, response: token },
+      body: JSON.stringify(data),
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     const outcome = await result.json();
