@@ -13,14 +13,14 @@ let allowlist = [
   "https://test.dmitrypol.com",
   "https://portfolio.dmitrypol.com",
 ];
-let corsOptionsDelegate = function (req, callback) {
-  let corsOptions;
-  if (allowlist.indexOf(req.header("Origin")) !== -1) {
-    corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowlist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
 };
 const app = express();
 const PORT = 3000;
@@ -56,11 +56,11 @@ const verifyTokenMiddleware = async (req, res, next) => {
 };
 
 // Middleware
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(express.json()); // Assuming the token is sent as JSON
 app.use(verifyTokenMiddleware);
-app.post("/pform", cors(corsOptionsDelegate), async (req, res) => {
+app.post("/pform", async (req, res) => {
   let formData = req.body;
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_Server,
