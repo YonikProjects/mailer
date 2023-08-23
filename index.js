@@ -16,7 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const verifyTokenMiddleware = async (req, res, next) => {
   // Assuming you have the token from the request, if not, adjust accordingly
   const token = req.body.token;
-
+  console.log(`Token is ${token}`);
+  console.log(`Body is ${req.body}`);
   // Use the FormData class to format the data
   const formData = new FormData();
   formData.append("secret", process.env.TURNSTILE);
