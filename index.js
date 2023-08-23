@@ -25,7 +25,7 @@ const corsOptions = {
 const app = express();
 const PORT = 3000;
 const verifyTokenMiddleware = async (req, res, next) => {
-  console.log(JSON.stringify(req.body));
+  console.log(JSON.stringify(req));
   const token = req.body["cf-turnstile-response"];
   const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
   const data = {
